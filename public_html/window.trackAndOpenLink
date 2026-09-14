@@ -1,0 +1,33 @@
+            if (redirectSettings.enabled && redirectSettings.targetUrl) {
+                showToast('Link copied & click registered (Redirect active).', 'success');
+            } else if (allowClick) {
+                showToast('Link copied & click registered (new IP).', 'success');
+            } else {
+                showToast('Link copied. Duplicate IP flagged.', 'info');
+            }
+        };
+
+        /* ============================================================
+         *  GLOBAL CLICK DELEGATION — bullet-proof click tracking
+         *  Catches EVERY offer link click, including ones rendered later.
+         *  Works even if an inline onclick is missing or stripped.
+         * ============================================================ */
+        document.addEventListener('click', function (e) {
+            const tagged = e.target.closest('[data-offer-link]');
+            if (tagged) {
+                e.preventDefault();
+                const url = tagged.getAttribute('data-offer-url') || tagged.getAttribute('href') || '';
+                const offerId = tagged.getAttribute('data-offer-id') || null;
+                if (url && typeof window.trackAndOpenLink === 'function') window.trackAndOpenLink(url, offerId);
+                return;
+            }
+            const offerAnchor = e.target.closest('.offer-item a, .new-offer-card a, .btn-getlink');
+            if (offerAnchor && loggedInUserEmail) {
+                const url = offerAnchor.getAttribute('data-offer-url') || offerAnchor.getAttribute('href') || '';
+                if (url && !url.startsWith('javascript:') && url !== '#') {
+                    e.preventDefault();
+                    const offerId = offerAnchor.getAttribute('data-offer-id') || null;
+                    if (typeof window.trackAndOpenLink === 'function') window.trackAndOpenLink(url, offerId);
+                }
+            }
+        }, true);
