@@ -1,0 +1,7 @@
+location /p/ {
+    autoindex off;
+    add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+}
+location = /index.html { add_header X-Robots-Tag "noindex, nofollow" always; }
